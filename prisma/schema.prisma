@@ -1,0 +1,72 @@
+// ApplyTrack Prisma Schema
+// Ready for PostgreSQL, MySQL, or Supabase
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ApplicationStatus {
+  WISHLIST
+  APPLIED
+  INTERVIEWING
+  OFFER
+  REJECTED
+  ARCHIVED
+}
+
+enum WorkplaceType {
+  Remote
+  Hybrid
+  Onsite
+}
+
+enum PriorityLevel {
+  High
+  Medium
+  Low
+}
+
+model User {
+  id           String           @id @default(cuid())
+  name         String?
+  email        String           @unique
+  avatar       String?
+  targetRole   String?
+  targetSalary String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  applications JobApplication[]
+
+  @@map("users")
+}
+
+model JobApplication {
+  id            String            @id @default(cuid())
+  userId        String?
+  user          User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company       String
+  role          String
+  status        ApplicationStatus @default(APPLIED)
+  workplaceType WorkplaceType     @default(Remote)
+  location      String?
+  salary        String?
+  url           String?
+  stage         String?           @default("Application Submitted")
+  priority      PriorityLevel     @default(Medium)
+  contactName   String?
+  contactEmail  String?
+  notes         String?           @db.Text
+  appliedDate   DateTime          @default(now())
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([appliedDate])
+  @@map("job_applications")
+}
