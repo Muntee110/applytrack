@@ -10,6 +10,7 @@ export const Input = React.forwardRef(
       error,
       helperText,
       icon: Icon,
+      endAdornment,
       id,
       disabled,
       ...props
@@ -51,6 +52,7 @@ export const Input = React.forwardRef(
               "disabled:cursor-not-allowed disabled:opacity-50",
               "dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus-visible:ring-offset-slate-950",
               Icon && "pl-9",
+              endAdornment && "pr-10",
               error
                 ? "border-rose-500 focus-visible:ring-rose-500 dark:border-rose-500"
                 : "border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-600",
@@ -58,6 +60,11 @@ export const Input = React.forwardRef(
             )}
             {...props}
           />
+          {endAdornment && (
+            <div className="absolute right-3 flex items-center">
+              {endAdornment}
+            </div>
+          )}
         </div>
         {error ? (
           <p id={errorId} className="text-xs text-rose-500 dark:text-rose-400 font-medium">
