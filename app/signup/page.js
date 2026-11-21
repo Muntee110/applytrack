@@ -57,11 +57,19 @@ export default function SignupPage() {
         password,
       });
 
-      if (error) {
-        setErrorMessage(error.message);
-      } else {
-        setSuccessMessage("Account created! Please check your email to verify your account.");
-      }
+     
+if (error) {
+  setErrorMessage(error.message);
+} else if (data.user?.identities?.length === 0) {
+  setErrorMessage(
+    "This email is already registered. Please login instead."
+  );
+} else {
+  setSuccessMessage(
+    "Account created! Please check your email to verify your account."
+  );
+}
+
     } catch (err) {
       setErrorMessage(err.message || "Something went wrong. Please try again.");
     } finally {
