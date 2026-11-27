@@ -15,17 +15,21 @@ import { ApplicationsService } from "@/lib/services/applications.service";
 import { STATUS_CONFIG, APPLICATION_STATUS } from "@/lib/utils/constants";
 import { formatDate } from "@/lib/utils/formatters";
 import { DashboardGreeting } from "@/components/features/dashboard/dashboard-greeting";
+import { DashboardReminders } from "@/components/features/dashboard/dashboard-reminders";
 
 export const metadata = {
   title: "Dashboard Overview",
 };
 
 export default async function DashboardPage() {
-  const metrics = await ApplicationsService.getDashboardMetrics();
-  const recentApplications = await ApplicationsService.listApplications({
-    sortBy: "updatedAt",
-    sortOrder: "desc",
-  });
+  const [metrics, recentApplications, remindersData] = await Promise.all([
+    ApplicationsService.getDashboardMetrics(),
+    ApplicationsService.listApplications({
+      sortBy: "updatedAt",
+      sortOrder: "desc",
+    }),
+    ApplicationsService.getReminders(),
+  ]);
 
   const recent = recentApplications.slice(0, 5);
 
@@ -151,6 +155,13 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Actionable Follow-up & Interview Reminders */}
+      <DashboardReminders
+        initialReminders={remindersData.reminders}
+        overdueCount={remindersData.overdueCount}
+        upcomingCount={remindersData.upcomingCount}
+      />
 
       {/* Recent Applications Feed */}
       <Card>

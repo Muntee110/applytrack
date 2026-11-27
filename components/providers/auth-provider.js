@@ -72,9 +72,22 @@ export function AuthProvider({ children }) {
           if (session?.user) {
             setUser(session.user);
             fetchProfile(session.user);
+            if (typeof document !== "undefined") {
+              document.cookie = `sb-user-id=${session.user.id}; path=/; max-age=604800; SameSite=Lax`;
+              document.cookie = `sb-user-email=${encodeURIComponent(session.user.email || "")}; path=/; max-age=604800; SameSite=Lax`;
+              const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || "";
+              if (name) {
+                document.cookie = `sb-user-name=${encodeURIComponent(name)}; path=/; max-age=604800; SameSite=Lax`;
+              }
+            }
           } else {
             setUser(null);
             setProfile(null);
+            if (typeof document !== "undefined") {
+              document.cookie = `sb-user-id=; path=/; max-age=0`;
+              document.cookie = `sb-user-email=; path=/; max-age=0`;
+              document.cookie = `sb-user-name=; path=/; max-age=0`;
+            }
           }
           setLoading(false);
         }
@@ -93,9 +106,22 @@ export function AuthProvider({ children }) {
       if (session?.user) {
         setUser(session.user);
         fetchProfile(session.user);
+        if (typeof document !== "undefined") {
+          document.cookie = `sb-user-id=${session.user.id}; path=/; max-age=604800; SameSite=Lax`;
+          document.cookie = `sb-user-email=${encodeURIComponent(session.user.email || "")}; path=/; max-age=604800; SameSite=Lax`;
+          const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || "";
+          if (name) {
+            document.cookie = `sb-user-name=${encodeURIComponent(name)}; path=/; max-age=604800; SameSite=Lax`;
+          }
+        }
       } else {
         setUser(null);
         setProfile(null);
+        if (typeof document !== "undefined") {
+          document.cookie = `sb-user-id=; path=/; max-age=0`;
+          document.cookie = `sb-user-email=; path=/; max-age=0`;
+          document.cookie = `sb-user-name=; path=/; max-age=0`;
+        }
       }
       setLoading(false);
     });
@@ -119,6 +145,11 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Error during signOut:", err);
     } finally {
+      if (typeof document !== "undefined") {
+        document.cookie = `sb-user-id=; path=/; max-age=0`;
+        document.cookie = `sb-user-email=; path=/; max-age=0`;
+        document.cookie = `sb-user-name=; path=/; max-age=0`;
+      }
       setUser(null);
       setProfile(null);
       router.push("/login");

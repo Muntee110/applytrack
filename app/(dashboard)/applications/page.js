@@ -19,6 +19,8 @@ export default async function ApplicationsPage({ searchParams }) {
   const search = params?.search || "";
   const status = params?.status || "ALL";
   const workplace = params?.workplace || "ALL";
+  const dateRange = params?.dateRange || "ALL";
+  const sort = params?.sort || "newest";
   const view = params?.view || "table";
 
   const [applications, metrics] = await Promise.all([
@@ -26,8 +28,8 @@ export default async function ApplicationsPage({ searchParams }) {
       search,
       status,
       workplace,
-      sortBy: "appliedDate",
-      sortOrder: "desc",
+      dateRange,
+      sort,
     }),
     ApplicationsService.getDashboardMetrics(),
   ]);
@@ -73,7 +75,11 @@ export default async function ApplicationsPage({ searchParams }) {
       </div>
 
       {/* Filter and Search Bar */}
-      <ApplicationFilters statusCounts={statusCounts} />
+      <ApplicationFilters
+        statusCounts={statusCounts}
+        totalCount={metrics.total}
+        filteredCount={applications.length}
+      />
 
       {/* View Switcher: Interactive Data Table or Pipeline Kanban Board */}
       {view === "board" ? (

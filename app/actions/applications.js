@@ -11,13 +11,17 @@ import { requireAuth } from "@/lib/auth/session";
  */
 export async function createApplicationAction(formData) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
 
     // Support both plain objects and FormData instances
     const data =
       formData instanceof FormData
         ? Object.fromEntries(formData.entries())
         : formData;
+
+    if (user?.id && !data.userId) {
+      data.userId = user.id;
+    }
 
     const created = await ApplicationsService.createApplication(data);
 
@@ -114,6 +118,69 @@ export async function deleteApplicationAction(id) {
     return {
       success: false,
       error: error.message || "Failed to delete application.",
+    };
+  }
+}
+
+/**
+ * Toggles a follow-up reminder's completion state
+ * @param {string} id
+ * @param {boolean} completed
+ */
+export async function markReminderCompletedAction(id, completed = true) {
+  try {
+    await requireAuth();
+
+    if (!id) {
+      return { success: false, error: "Application ID is required." };
+    }
+
+    const updated = await ApplicationsService.markReminderCompleted(id, completed);
+
+    revalidatePath("/applications");
+    revalidatePath(`/applications/${id}`);
+    revalidatePath("/analytics");
+    revalidatePath("/");
+
+    return { success: true, data: updated };
+  } catch (error) {
+    console.error("Failed to mark reminder completed:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to update reminder.",
+    };
+  }
+}
+
+/**
+ * Updates an application's follow-up / reminder date
+ * @param {string} id
+ * @param {string | null} followUpDate
+ */
+export async function updateFollowUpAction(id, followUpDate) {
+  try {
+    await requireAuth();
+
+    if (!id) {
+      return { success: false, error: "Application ID is required." };
+    }
+
+    const updated = await ApplicationsService.updateApplication(id, {
+      followUpDate,
+      followUpCompleted: false,
+    });
+
+    revalidatePath("/applications");
+    revalidatePath(`/applications/${id}`);
+    revalidatePath("/analytics");
+    revalidatePath("/");
+
+    return { success: true, data: updated };
+  } catch (error) {
+    console.error("Failed to update follow-up date:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to update follow-up date.",
     };
   }
 }

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils/formatters";
 import { APPLICATION_STATUS } from "@/lib/utils/constants";
+import { ApplicationFollowUp } from "@/components/features/applications/application-followup";
 
 export async function generateStaticParams() {
   const apps = await ApplicationsService.listApplications();
@@ -175,8 +176,17 @@ export default async function ApplicationDetailPage({ params }) {
           </Card>
         </div>
 
-        {/* Right Column: Key Contacts & Stage Tracker */}
+        {/* Right Column: Follow-up Reminders, Key Contacts & Stage Tracker */}
         <div className="space-y-6">
+          {/* Follow-up Reminder Card */}
+          <ApplicationFollowUp
+            applicationId={application.id}
+            company={application.company}
+            role={application.role}
+            initialFollowUpDate={application.followUpDate}
+            initialCompleted={application.followUpCompleted}
+          />
+
           {/* Contact Card */}
           <Card>
             <CardHeader>

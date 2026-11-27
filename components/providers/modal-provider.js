@@ -38,6 +38,7 @@ export function ApplicationModalProvider({ children }) {
     priority: "Medium",
     contactName: "",
     contactEmail: "",
+    followUpDate: "",
     notes: "",
   });
 
@@ -54,6 +55,7 @@ export function ApplicationModalProvider({ children }) {
       priority: "Medium",
       contactName: "",
       contactEmail: "",
+      followUpDate: "",
       notes: "",
     });
     setIsOpen(true);
@@ -90,7 +92,13 @@ export function ApplicationModalProvider({ children }) {
 
     try {
       setIsSubmitting(true);
-      const res = await createApplicationAction(formData);
+      const payload = {
+        ...formData,
+        followUpDate: formData.followUpDate
+          ? new Date(formData.followUpDate).toISOString()
+          : null,
+      };
+      const res = await createApplicationAction(payload);
       if (res.success) {
         toast.success(
           "Application Added!",
@@ -222,6 +230,14 @@ export function ApplicationModalProvider({ children }) {
                 onChange={(e) => handleChange("contactEmail", e.target.value)}
               />
             </div>
+
+            <Input
+              label="Next Follow-Up / Reminder Date (Optional)"
+              type="date"
+              value={formData.followUpDate}
+              onChange={(e) => handleChange("followUpDate", e.target.value)}
+              helperText="Set a reminder date for following up on this application"
+            />
 
             <div>
               <label

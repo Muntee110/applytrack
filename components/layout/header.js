@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useApplicationModal } from "@/components/providers/modal-provider";
 import { useAuth } from "@/components/providers/auth-provider";
+import { NotificationBell } from "@/components/features/notifications/notification-bell";
 
 export function Header() {
   const { openModal } = useApplicationModal();
@@ -51,6 +52,9 @@ export function Header() {
           <Plus className="h-4 w-4" />
           <span>New Application</span>
         </Button>
+
+        {/* Notification Bell */}
+        <NotificationBell />
 
         {/* Theme Toggle */}
         <ThemeToggle />

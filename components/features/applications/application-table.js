@@ -11,6 +11,7 @@ import {
   Calendar,
   DollarSign,
   MapPin,
+  Bell,
 } from "lucide-react";
 import { ApplicationStatusPill } from "./application-status-pill";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -130,6 +131,21 @@ export function ApplicationTable({ applications = [] }) {
                             <span className="text-[10px] text-slate-400 dark:text-slate-500">
                               • {app.workplaceType}
                             </span>
+                            {app.followUpDate && (
+                              <span
+                                className={`inline-flex items-center gap-1 rounded px-1.5 py-0.2 text-[10px] font-semibold ${
+                                  app.followUpCompleted
+                                    ? "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                                    : app.followUpDate.split("T")[0] < new Date().toISOString().split("T")[0]
+                                    ? "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300"
+                                    : "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                                }`}
+                                title={`Follow-up: ${app.followUpDate.split("T")[0]}`}
+                              >
+                                <Bell className="h-2.5 w-2.5" />
+                                {app.followUpCompleted ? "Done" : "Follow-up"}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -256,9 +272,25 @@ export function ApplicationTable({ applications = [] }) {
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
-                <span className="text-[11px] text-slate-400">
-                  Applied {formatDate(app.appliedDate)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400">
+                    Applied {formatDate(app.appliedDate)}
+                  </span>
+                  {app.followUpDate && (
+                    <span
+                      className={`inline-flex items-center gap-1 rounded px-1.5 py-0.2 text-[10px] font-semibold ${
+                        app.followUpCompleted
+                          ? "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                          : app.followUpDate.split("T")[0] < new Date().toISOString().split("T")[0]
+                          ? "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300"
+                          : "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                      }`}
+                    >
+                      <Bell className="h-2.5 w-2.5" />
+                      {app.followUpCompleted ? "Done" : "Follow-up"}
+                    </span>
+                  )}
+                </div>
 
                 <div className="flex items-center gap-2">
                   <Link

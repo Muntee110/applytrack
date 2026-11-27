@@ -48,6 +48,9 @@ export function ApplicationForm({ initialData = null, onSuccess, onCancel }) {
     appliedDate: initialData?.appliedDate
       ? initialData.appliedDate.split("T")[0]
       : todayStr,
+    followUpDate: initialData?.followUpDate
+      ? initialData.followUpDate.split("T")[0]
+      : "",
   });
 
   const handleChange = (field, value) => {
@@ -82,6 +85,9 @@ export function ApplicationForm({ initialData = null, onSuccess, onCancel }) {
       const res = await createApplicationAction({
         ...formData,
         appliedDate: new Date(formData.appliedDate).toISOString(),
+        followUpDate: formData.followUpDate
+          ? new Date(formData.followUpDate).toISOString()
+          : null,
       });
 
       if (res.success) {
@@ -220,13 +226,23 @@ export function ApplicationForm({ initialData = null, onSuccess, onCancel }) {
             />
           </div>
 
-          <Input
-            label="Current Interview Stage"
-            placeholder="e.g. Recruiter Screen, Technical Assessment, System Design"
-            value={formData.stage}
-            onChange={(e) => handleChange("stage", e.target.value)}
-            helperText="The immediate milestone or next step in the interview cycle"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Current Interview Stage"
+              placeholder="e.g. Recruiter Screen, Technical Assessment, System Design"
+              value={formData.stage}
+              onChange={(e) => handleChange("stage", e.target.value)}
+              helperText="The immediate milestone or next step in the interview cycle"
+            />
+            <Input
+              label="Next Follow-Up / Reminder Date"
+              type="date"
+              icon={Calendar}
+              value={formData.followUpDate}
+              onChange={(e) => handleChange("followUpDate", e.target.value)}
+              helperText="Set a reminder date for following up with the recruiter"
+            />
+          </div>
         </CardContent>
       </Card>
 
