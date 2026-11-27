@@ -39,6 +39,15 @@ export default function LoginPage() {
   const [resetMessage, setResetMessage] = React.useState("");
   const [resetError, setResetError] = React.useState("");
 
+  // Auto-redirect if already logged in
+  React.useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        router.push("/");
+      }
+    });
+  }, [router]);
+
   async function handleLogin(e) {
     e.preventDefault();
     setErrorMessage("");
@@ -66,7 +75,7 @@ export default function LoginPage() {
         setErrorMessage(error.message);
       } else {
         setSuccessMessage("Welcome back! Redirecting to your dashboard...");
-        router.push("/applications");
+        router.push("/");
         router.refresh();
       }
     } catch (err) {

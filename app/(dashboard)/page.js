@@ -14,6 +14,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ApplicationsService } from "@/lib/services/applications.service";
 import { STATUS_CONFIG, APPLICATION_STATUS } from "@/lib/utils/constants";
 import { formatDate } from "@/lib/utils/formatters";
+import { DashboardGreeting } from "@/components/features/dashboard/dashboard-greeting";
 
 export const metadata = {
   title: "Dashboard Overview",
@@ -33,9 +34,7 @@ export default async function DashboardPage() {
       {/* Top Welcome & Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
-            Welcome back, Alex 👋
-          </h1>
+          <DashboardGreeting />
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Here is what is happening across your job search pipeline today.
           </p>

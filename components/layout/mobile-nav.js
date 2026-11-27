@@ -12,10 +12,12 @@ import {
   Settings,
   Plus,
   Target,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { useApplicationModal } from "@/components/providers/modal-provider";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const NAV_ITEMS = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
@@ -28,6 +30,27 @@ function MobileNavContent() {
   const [isOpen, setIsOpen] = React.useState(false);
   const pathname = usePathname();
   const { openModal } = useApplicationModal();
+  const { user, profile, signOut } = useAuth();
+
+  const displayName =
+    user?.user_metadata?.full_name ||
+    profile?.full_name ||
+    user?.user_metadata?.name ||
+    (user?.email ? user.email.split("@")[0] : "Candidate");
+
+  const initials =
+    displayName
+      .split(" ")
+      .map((n) => n[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "AT";
+
+  const targetRole =
+    user?.user_metadata?.target_role ||
+    profile?.target_role ||
+    "Job Seeker";
 
   React.useEffect(() => {
     setIsOpen(false);
@@ -153,18 +176,38 @@ function MobileNavContent() {
             </div>
 
             <div className="border-t border-slate-100 px-5 pt-4 dark:border-slate-800">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
-                  AM
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">
-                    Alex Morgan
-                  </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Senior Software Engineer
-                  </p>
-                </div>
+              <div className="flex items-center justify-between gap-2">
+                <Link
+                  href="/settings"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 min-w-0 flex-1 group"
+                >
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300 shrink-0">
+                    {initials}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {displayName}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                      {targetRole}
+                    </p>
+                  </div>
+                </Link>
+
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => {
+                    setIsOpen(false);
+                    signOut();
+                  }}
+                  title="Log out"
+                  aria-label="Log out of ApplyTrack"
+                  className="text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/50 dark:hover:text-rose-400 shrink-0"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>

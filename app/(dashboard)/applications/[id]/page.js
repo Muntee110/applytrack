@@ -18,15 +18,10 @@ export async function generateStaticParams() {
   return apps.map((app) => ({ id: app.id }));
 }
 
-export async function generateMetadata({ params }) {
-  const { id } = await params;
-  const application = await ApplicationsService.getApplication(id);
-  if (!application) return { title: "Application Not Found" };
-  return {
-    title: `${application.company} — ${application.role}`,
-    description: `Application details for ${application.role} at ${application.company}.`,
-  };
-}
+export const metadata = {
+  title: "Application Details",
+  description: "View and manage job application details.",
+};
 
 export default async function ApplicationDetailPage({ params }) {
   const { id } = await params;

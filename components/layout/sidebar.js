@@ -10,10 +10,12 @@ import {
   Settings,
   Plus,
   Target,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { useApplicationModal } from "@/components/providers/modal-provider";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const NAV_ITEMS = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
@@ -62,6 +64,27 @@ function SidebarNav() {
 
 export function Sidebar({ className }) {
   const { openModal } = useApplicationModal();
+  const { user, profile, signOut } = useAuth();
+
+  const displayName =
+    user?.user_metadata?.full_name ||
+    profile?.full_name ||
+    user?.user_metadata?.name ||
+    (user?.email ? user.email.split("@")[0] : "Candidate");
+
+  const initials =
+    displayName
+      .split(" ")
+      .map((n) => n[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "AT";
+
+  const targetRole =
+    user?.user_metadata?.target_role ||
+    profile?.target_role ||
+    "Job Seeker";
 
   return (
     <aside
@@ -136,21 +159,38 @@ export function Sidebar({ className }) {
 
       {/* User Footer Profile */}
       <div className="border-t border-slate-100 p-3.5 dark:border-slate-800/80">
-        <div className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
-          <div className="relative">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
-              AM
+        <div className="flex items-center justify-between gap-2 rounded-lg p-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
+          <Link
+            href="/settings"
+            className="flex items-center gap-3 min-w-0 flex-1 group"
+            title="Manage profile settings"
+          >
+            <div className="relative shrink-0">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                {initials}
+              </div>
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900" />
             </div>
-            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500 dark:border-slate-900" />
-          </div>
-          <div className="flex flex-1 flex-col overflow-hidden text-left">
-            <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">
-              Alex Morgan
-            </span>
-            <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
-              Senior Software Engineer
-            </span>
-          </div>
+            <div className="flex flex-1 flex-col overflow-hidden text-left">
+              <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {displayName}
+              </span>
+              <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
+                {targetRole}
+              </span>
+            </div>
+          </Link>
+
+          {/* Logout Button */}
+          <button
+            type="button"
+            onClick={signOut}
+            title="Log out"
+            aria-label="Log out of ApplyTrack"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/50 dark:hover:text-rose-400 transition-colors shrink-0"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </aside>
